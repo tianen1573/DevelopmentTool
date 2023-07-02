@@ -1,17 +1,34 @@
-###### 配置文件
+#### 配置GIT信息
     git config uesr.name "name"
     git config user.email "email"
     --global 该机器所有仓库都使用 此次配置
     --unset 删除对应配置，注意：配置时如果使用了--global，删除时也需要该选项
-###### 提交文件至暂存区
-    git add 
-    .
-    filename
-###### 提交至版本库
-    git commit -m "描述"
-###### 查看提交日志 与 HEAD
 
+    git config -l 当前仓库显示配置信息
+
+### 工作区，暂存区，版本库
+    工作区 ： git仓库所在目录即为工作区，如本地仓库init目录，远程clone下来生成的目录，都是工作区
+    暂存区 ： 一般存放在.git/index，暂存区的内容会被GIT跟踪
+    版本库 ： 工作区有一个.git，他不算工作区，而是版本库。版本库的所有文件都会被Git管理起来，进行追踪，并记录各个版本，可以还原至某个版本
+
+#### 提交文件至暂存区
+    git add [filename1] [file2] [file3] [dir] [.]
+    . 当前目录下的所有文件
+    filename 指定文件
+    dir 子目录
+#### 提交至版本库
+    git commit -m "描述" 将暂存区的所有文件都提交的版本库
+    git commit [f1] [f2] [dir1] -m "描述" 指定文件或目录提交的版本库
+#### 查看提交日志
     git log 查看提交日志
+
+        [qlz@tianen1573 lesson3]$ git log
+        commit fa6447f65d5b00545c2a4af0aa67deedc87a6241  //commit id
+        Author: qlz <415258758@qq.com>  //提交人信息
+        Date:   Sun Jul 2 10:18:19 2023 +0800  //时间
+
+            add file1  //描述
+
         [qlz@tianen1573 GIT]$ git log --pretty=oneline
         20b33292484776d78de2225e52c0c32fb4d64de5 modify git.txt
         37e86ee30b34fa3b89d98e5ea3dcf3cd42cf16d1 add file5
@@ -19,52 +36,85 @@
         2578891270bbe96964a94b2686274dd9603df1fa add 3 files
         327afd031a5dacf6c2e0bda42a02924b8ed73f52 git.txt
         这些都是commit id
-    HEAD就是我们默认指向的master分支的指针
+    [--pretty=oneline] 简短log
+
+#### 查看.git
+    tree .git
+        1. index 就是暂存区， add的内容存放在这里
+        2. HEAD 指向 我们当前的工作分支，会随着工作分支的变化而变化，一般默认指向主分支
+#### 认识HEAD
+    HEADHEAD 指向 我们当前的工作分支，会随着工作分支的变化而变化，一般默认指向主分支
     cat .git/HEAD
-        ref: refs/heads/master
+        ref: refs/heads/master //当前工作分支
     cat .git/refs/heads/master
         20b33292484776d78de2225e52c0c32fb4d64de5 //master最新版本
-###### objects对象库
+#### objects对象库
     [qlz@tianen1573 GIT]$ ls .git/objects
     20  25  31  32  35  37  39  3f  51  6b  70  8d  b0  bd  d0  d1  e6  info  pack
-    和tree与log作比较会发现commitid前两位是文件夹名称，后38位是文件名称
+    和tree与log作比较会发现 commitid前两位是文件夹名称，后38位是文件名称
 
     git cat-file -p commitid 可以查看该文件内容
-        [qlz@tianen1573 GIT]$ git cat-file -p 20b33292484776d78de2225e52c0c32fb4d64de5
-        tree 391e01f7de7a86cb02bbe8bb47e2e2402a90217f
-        parent 37e86ee30b34fa3b89d98e5ea3dcf3cd42cf16d1
-        author qlz <415258758@qq.com> 1688039631 +0800
-        committer qlz <415258758@qq.com> 1688039631 +0800
-        
-        modify git.txt
+        [qlz@tianen1573 lesson3]$ git cat-file -p fa6447f65d5b00545c2a4af0aa67deedc87a6241
+        tree 2c550a9521e0c4f8a82eea145026f831cf9be526
+        parent 3b3e45ff1d2ff577ab0de3aba39dc95ea80972ff
+        author qlz <415258758@qq.com> 1688264299 +0800
+        committer qlz <415258758@qq.com> 1688264299 +0800
+
+        add file1
         //这就是我们最近一次提交
-        //继续打印，可以发现，git还会保存对文件的修改
-        [qlz@tianen1573 GIT]$ git cat-file -p 391e01f7de7a86cb02bbe8bb47e2e2402a90217f
-        040000 tree 31881726d51abec1a09b8ab82606e805df49b230    lesson1
-        [qlz@tianen1573 GIT]$ git cat-file -p 31881726d51abec1a09b8ab82606e805df49b230
-        100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391    file1
-        100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391    file2
-        100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391    file3
-        100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391    file4
-        100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391    file5
-        100644 blob bd6bb09f40ad27a3bbdf55592438e4b154c59b92    git.txt
-        [qlz@tianen1573 GIT]$ git cat-file -p bd6bb09f40ad27a3bbdf55592438e4b154c59b92
-        hello git!
-        hello git!
-###### 查看仓库状态
+
+        //继续打印 tree ，可以发现，git还会保存对文件的修改
+        [qlz@tianen1573 lesson3]$ git cat-file -p 2c550a9521e0c4f8a82eea145026f831cf9be526
+        040000 tree a91625d914758fa7df715af5b272579e72f9ed79    GIT
+        100644 blob 18f44fc613762093935e9adbe1e503e08481da0e    README.md
+        [qlz@tianen1573 lesson3]$ git cat-file -p a91625d914758fa7df715af5b272579e72f9ed79
+        040000 tree 20bfb2fd506d8f5829cceaac13348ebf89368b96    LESSON
+        100644 blob ad87f1ccebb4b6c323206920cc049bf9cf1ed8e7    README.md
+        040000 tree f4ce54a9a0ce4127fad5a9523d836042c4382e0b    lesson1
+        040000 tree 05a932fe972f185a0b1dcd6f0a548f58898be56d    lesson2
+        040000 tree ad24149d789e59d4b5f9ce41cda90110ca0f98b7    lesson3
+        [qlz@tianen1573 lesson3]$ git cat-file -p ad24149d789e59d4b5f9ce41cda90110ca0f98b7
+        100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391    file1   
+        // 可以发现 新增的file1被记录下了
+        // 如果是文本改动， 更能体现
+
+        简单理解，objecs包含了创建的各种版本库对象及内容，存放了所有git的维护和修改
+#### 关于文件修改
+    GIT跟踪并管理的是修改，而非文件，所以GIT会跟踪文件内容的修改(新增，删除)，文件的修改(创建，删除)等。
+    所以当发生修改时，我们需要把修改的文件 add + commit 才能提交至版本库。
+
+#### 查看仓库状态
     git status //可以查看文件在commit之后是否有变化
-###### 查看文件改动
-    git diff filename 查看工作区和暂存区里文件的改动
-        [qlz@tianen1573 lesson1]$ git diff git.txt
-        diff --git a/lesson1/git.txt b/lesson1/git.txt  a代表改之前，b代表改之后
-        index d1c6469..bd6bb09 100644
-        --- a/lesson1/git.txt
-        +++ b/lesson1/git.txt
+
+    [qlz@tianen1573 lesson3]$ git status
+    # On branch GIT
+    # Your branch is ahead of 'origin/GIT' by 1 commit. // 1个提交，建议push
+    #   (use "git push" to publish your local commits)
+    #
+    # Changes not staged for commit:
+    #   (use "git add <file>..." to update what will be committed)
+    #   (use "git checkout -- <file>..." to discard changes in working directory)
+    #
+    #       modified:   ../README.md //文件修改
+    #       modified:   file1 // 文件修改
+    #       //建议add
+    no changes added to commit (use "git add" and/or "git commit -a")
+
+#### 查看文件改动
+    git diff [filename] 查看工作区和暂存区里文件的改动
+        [qlz@tianen1573 lesson3]$ git diff file1
+        diff --git a/GIT/lesson3/file1 b/GIT/lesson3/file1
+        index 72943a1..d39cda9 100644
+        --- a/GIT/lesson3/file1
+        +++ b/GIT/lesson3/file1
         @@ -1 +1,2 @@
-        hello git!
-        +hello git! +为新增，-删除
-    git diff HEAD filename 查看暂存区和版本仓库的文件改动
-###### 版本回退
+        aaa
+        +bbb
+        \ No newline at end of file
+
+    git diff HEAD [filename] 查看暂存区和版本仓库的文件改动
+
+#### 版本回退
     git reset [--soft | --mixed | --hard] [HEAD]
     --mixed 为默认选项，使用时可以不用带该参数。该参数将暂存区和版本库内退回为指定提交版本内容，工作区文件保持不变，版本库之间的差异和暂存区的内容都放到工作区。
     --soft 参数对于工作区和暂存区的内容不变，只是将版本库回退到某个指定版本，两个版本库的差异内容会放到暂存区保存。
@@ -76,18 +126,21 @@
         ◦HEAD^上一个版本
         ◦HEAD^^上上一个版本
         ◦以此类推...
-        可以使用〜数字表示：
+        可以使用〜数字表示：
         ◦HEAD~0表示当前版本
         ◦HEAD~1上一个版本
-        ◦HEAD^2上上一个版本
+        ◦HEAD~2上上一个版本
         ◦以此类推...
-###### 查看本地的提交命令的commitid
+
+#### 查看本地的提交命令的commitid
     git reflog 不受版本约束，只关联本地
+    七位commitid, 也能代表一个对象
+    
 ###### 撤销修改/回退
     1. 未add，撤销工作区
         git checkout -- filename 让工作区的文件回到最近一次add/commit状态 //--很重要，是选项
     2. 已add，未commit，撤销暂存区
-        git reset HEAD filename //省略了--mixed 回退到上个版本，并将暂存区的内容和版本差异放到工作区，清空暂存区
+        git reset HEAD filename //省略了--mixed, 没有commit就没有产生版本，退回到该版本，此时暂存区是清空的，之前add内容会退回到工作区
         git checkout -- filename//将工作区回到最近一次
     3。 add + commit，但没有push
         git reset --hard HEAD^ //回退到上个版本，版本库+暂存区+工作区全回退
