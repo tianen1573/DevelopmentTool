@@ -136,7 +136,7 @@
     git reflog 不受版本约束，只关联本地
     七位commitid, 也能代表一个对象
     
-###### 撤销修改/回退
+#### 撤销修改/回退
     1. 未add，撤销工作区
         git checkout -- filename 让工作区的文件回到最近一次add/commit状态 //--很重要，是选项
     2. 已add，未commit，撤销暂存区
@@ -144,10 +144,10 @@
         git checkout -- filename//将工作区回到最近一次
     3。 add + commit，但没有push
         git reset --hard HEAD^ //回退到上个版本，版本库+暂存区+工作区全回退
-###### 文件删除
+#### 文件删除
     git rm filename //从暂存区和工作区删除文件
     git commit -m "描述" //提交至版本库
-###### GIT分支管理
+#### GIT分支管理
     git branch //查看本地仓库的分支
 
     HEAD指向的分支，就是当前工作的分支，不是必须指向主分支
@@ -164,15 +164,15 @@
     git branch -d 分支b //在当前分支下， 删除另一个分支b, 分支b是已经被merge过的分支
     git branch -D 分支b //强制删除分支b
 
-###### 分支合并模式
+#### 分支合并模式
     Fast-forward //查看log时， 看不出来时是commit提交还是merge提交
     no-ff // 可以看出来是commit还是merge
     git merge --no-ff -m "描述此次合并信息" 分支b //代表当前分支合并分支b时，不使用ff模式， 但需要提交描述信息
 
-###### 分支策略
+#### 分支策略
     主分支和其他分支在稳定上的区别
 
-###### 分支管理——bug分支
+#### 分支管理——bug分支
     git stash 会保存被追踪的文件的变动至当前分区的工作区，即使没add，其他分支也看不到
 	git stash pop 将存储的更改放出来
 	git stash list 将存储的更改展示出来
@@ -181,27 +181,26 @@
     我们让dev合并master，在本地分支进行修改测试解决冲突，保证master的稳定
     再让master合并dev分支，此时不会在存在大漏洞
 
-###### 远程操作--理解分布式版本控制
+#### 远程操作--理解分布式版本控制
 
-###### 克隆远程仓库
+#### 克隆远程仓库
     https ： 直接克隆
     ssh ： 需要配置本地公钥
 
-###### 推送push
+#### 推送push
     git push 远程仓库 本地分支:远程分支
-###### 拉取pull
+#### 拉取pull
     git pull 远程仓库 远程分支:本地分支 //拉取并合并某分支, 拉取分支内的内容
     git pull //拉取整个远程仓库
 
-###### 忽略特殊文件
+#### 忽略特殊文件
     .gitignore
     // gitignore 文件里可以选择 忽略某些类型的文件，这些文件不会被追踪
     // 写在文件里的代表是被忽略的， 带！是不忽略的
     git add -f 文件 //-f选项可以强制添加被忽略的文件
-###### 配置命令别名
-    git config [--global] alias.st status //给status起别名为st
-
-###### 标签管理
+#### 配置命令别名
+    git config [--global] alias.st status //给status起别名为s
+#### 标签管理
     git tag v1.0 //默认给最新的一次提交commit打标签
     git tag v1.0 commitid //指定提交打标签
 
@@ -209,9 +208,8 @@
     git push 远程仓库 --tags //将所有标签推送到远程仓库
 
     git tag -d v1.0 //删除标签v1.0
-    git push 远程仓库 :v1.0 // 把删除标签v1.0推送到远程仓库
-
-###### 多人协作
+    git push 远程仓库 :v1.0 // 把删除标签v1.0推送到远程仓
+#### 多人协作
     git branch -r //可查看远程分支
     git branch -a //所有分支
     git branch -vv //查看本地分支和远程分支所建立的连接
